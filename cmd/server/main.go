@@ -5,19 +5,31 @@ import (
 	"log"
 	"net/http"
 	"secure-todo/internal/db"
+	"secure-todo/internal/handlers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	pool, err := db.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer pool.Close()
+
+	userRepo := &db.UserRepository{
+		Pool: pool,
+	}
+
+	authHandler := &handlers.AuthHandler{
+		Users: userRepo,
+	}
 
 	router := gin.Default()
 
@@ -27,6 +39,8 @@ func main() {
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "healthy"})
 	})
+
+	router.POST("/api/register", authHandler.Register)
 
 	fmt.Println("Starting server...")
 	err = router.Run(":8080")
