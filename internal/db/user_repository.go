@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"secure-todo/internal/models"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -24,4 +25,16 @@ func (r *UserRepository) CreateUser(username string, hashedPW string) (int, erro
 	).Scan(&userID)
 
 	return userID, err
+}
+
+func (r *UserRepository) GetUserByUsername(username string) (*models.User, error) {
+	user := &models.User{}
+
+	err := r.Pool.QueryRow(
+		context.Background(),
+		`SELECT id, username, hashed_pw FROM users WHERE username = $1`,
+		username,
+	).Scan(&user.ID, &user.Username, &user.HashedPW)
+
+	return user, err
 }

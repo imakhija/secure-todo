@@ -17,6 +17,11 @@ type registerRequest struct {
 	Password string `json:"password"`
 }
 
+type loginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req registerRequest
 
@@ -38,4 +43,30 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"id": userID})
+}
+
+func (h *AuthHandler) Login(c *gin.Context) {
+	var req loginRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	user, err := h.Users.GetUserByUsername(req.Username)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "couldn't find user"})
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword(
+		[]byte(user.HashedPW),
+		[]byte(req.Password),
+	)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }

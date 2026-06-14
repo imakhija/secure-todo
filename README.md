@@ -31,6 +31,14 @@ secure-todo/
 
 ## Local Development
 
+### Configure .env
+```
+POSTGRES_USER=...
+POSTGRES_PASSWORD=...
+POSTGRES_DB=...
+DATABASE_URL=...
+```
+
 ### Start PostgreSQL
 
 ```bash
@@ -85,5 +93,28 @@ Successful Response:
 ```json
 {
   "id": 1
+}
+```
+
+### Login User
+
+```http
+POST /api/login
+```
+
+Request:
+
+```json
+{
+  "username": "imakhija",
+  "password": "12345"
+}
+```
+
+Successful Response:
+
+```json
+{
+  "message": "login successful"
 }
 ```

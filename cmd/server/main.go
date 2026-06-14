@@ -41,6 +41,7 @@ func main() {
 	})
 
 	router.POST("/api/register", authHandler.Register)
+	router.POST("/api/login", authHandler.Login)
 
 	fmt.Println("Starting server...")
 	err = router.Run(":8080")
