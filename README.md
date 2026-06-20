@@ -10,6 +10,8 @@ secure-todo/
 │   └── server/
 │       └── main.go
 ├── internal/
+│   ├── auth/
+│   │   ├── jwt.go
 │   ├── db/
 │   │   ├── db.go
 │   │   └── user_repository.go
@@ -31,12 +33,19 @@ secure-todo/
 
 ## Local Development
 
+### Clone this repository
+`git clone https://github.com/imakhija/secure-todo.git`
+
+### Install dependencies
+`go mod tidy`
+
 ### Configure .env
 ```
 POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 POSTGRES_DB=...
 DATABASE_URL=...
+JWT_SECRET=...
 ```
 
 ### Start PostgreSQL
@@ -115,6 +124,6 @@ Successful Response:
 
 ```json
 {
-  "message": "login successful"
+  "token": "eyJ..."
 }
 ```
