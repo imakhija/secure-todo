@@ -28,8 +28,16 @@ func main() {
 		Pool: pool,
 	}
 
+	todoRepo := &db.TodoRepository{
+		Pool: pool,
+	}
+
 	authHandler := &handlers.AuthHandler{
 		Users: userRepo,
+	}
+
+	todoHandler := &handlers.TodoHandler{
+		Todos: todoRepo,
 	}
 
 	router := gin.Default()
@@ -46,10 +54,10 @@ func main() {
 
 	authorized := router.Group("/api")
 	authorized.Use(middleware.AuthMiddleware())
-	authorized.GET("/me", func(c *gin.Context) {
-		userID, _ := c.Get("userID")
-		c.JSON(http.StatusOK, gin.H{"user_id": userID})
-	})
+	authorized.POST("/todos", todoHandler.Create)
+	authorized.GET("/todos", todoHandler.GetAll)
+	authorized.PUT("/todos/:id", todoHandler.Update)
+	authorized.DELETE("/todos/:id", todoHandler.Delete)
 
 	fmt.Println("Starting server...")
 	err = router.Run(":8080")

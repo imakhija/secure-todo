@@ -3,8 +3,8 @@ package models
 import "time"
 
 type User struct {
-	ID        int
-	Username  string
-	HashedPW  string
-	CreatedAt time.Time
+	ID        int       `json:"id"`
+	Username  string    `json:"username"`
+	HashedPW  string    `json:"-"`
+	CreatedAt time.Time `json:"created_at"`
 }
